@@ -117,8 +117,19 @@ return {
 			local telescope = require("telescope")
 			telescope.load_extension("file_browser")
 
-			-- Keymap: <leader>fe to open the browser
-			vim.keymap.set("n", "<leader>fe", function()
+		-- Keymap: <leader>fp to browse projects folder
+		vim.keymap.set("n", "<leader>fp", function()
+			telescope.extensions.file_browser.file_browser({
+				path = "~/Desktop/projects",
+				depth = 1,
+				hidden = false,
+				grouped = true,
+				initial_mode = "normal",
+			})
+		end, { desc = "[F]ind [P]roject" })
+
+		-- Keymap: <leader>fe to open the browser
+		vim.keymap.set("n", "<leader>fe", function()
 				telescope.extensions.file_browser.file_browser({
 					path = "%:p:h", -- start in current file's directory
 					cwd = vim.loop.cwd(), -- fallback to current working directory

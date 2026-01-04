@@ -222,18 +222,7 @@ return {
 				-- clangd = {},
 				-- gopls = {},
 				ruff = {}, -- Python linting (Astral)
-				rust_analyzer = {
-					settings = {
-						["rust-analyzer"] = {
-							check = {
-								command = "clippy", -- Use clippy for linting
-							},
-							cargo = {
-								allFeatures = true,
-							},
-						},
-					},
-				},
+				-- rust_analyzer configured via rustaceanvim (see rustaceanvim.lua)
 				-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 				--
 				-- Some languages (like typescript) have entire language plugins that can be useful:
@@ -291,6 +280,8 @@ return {
 						server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
 						require("lspconfig")[server_name].setup(server)
 					end,
+					-- Skip rust_analyzer as it's handled by rustaceanvim
+					["rust_analyzer"] = function() end,
 				},
 			})
 
@@ -313,6 +304,9 @@ return {
 					end
 				end,
 			})
+
+			-- Disable lspconfig's rust_analyzer since rustaceanvim handles it
+			vim.lsp.enable("rust_analyzer", false)
 		end,
 	},
 

@@ -115,7 +115,22 @@ return {
 		dependencies = { "nvim-telescope/telescope.nvim", "nvim-lua/plenary.nvim" },
 		config = function()
 			local telescope = require("telescope")
+			local actions = require("telescope.actions")
+			local action_state = require("telescope.actions.state")
 			telescope.load_extension("file_browser")
+
+			-- Custom action: cd to selected directory and close picker
+			local function cd_and_close(prompt_bufnr)
+				local entry = action_state.get_selected_entry()
+				if entry and entry.Path then
+					local path = entry.Path:absolute()
+					if vim.fn.isdirectory(path) == 1 then
+						vim.cmd("cd " .. vim.fn.fnameescape(path))
+						vim.notify("Changed directory to: " .. path)
+					end
+				end
+				actions.close(prompt_bufnr)
+			end
 
 		-- Keymap: <leader>fp to browse projects folder
 		vim.keymap.set("n", "<leader>fp", function()
@@ -125,6 +140,10 @@ return {
 				hidden = false,
 				grouped = true,
 				initial_mode = "normal",
+				attach_mappings = function(_, map)
+					map("n", "t", cd_and_close)
+					return true
+				end,
 			})
 		end, { desc = "[F]ind [P]roject" })
 
